@@ -1,4 +1,4 @@
-module github.com/ats2otus/hw01_hello_otus
+module github.com/ats2otus/home_work/hw01_hello_otus
 
 go 1.16
 
