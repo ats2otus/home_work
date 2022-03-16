@@ -10,10 +10,6 @@ import (
 var ErrInvalidString = errors.New("invalid string")
 
 func Unpack(src string) (string, error) {
-	if len(src) == 0 {
-		return "", nil
-	}
-
 	var prev rune
 	var buf bytes.Buffer
 
