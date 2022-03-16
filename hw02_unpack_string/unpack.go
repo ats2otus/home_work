@@ -10,6 +10,10 @@ import (
 var ErrInvalidString = errors.New("invalid string")
 
 func Unpack(src string) (string, error) {
+	if isInvalidStr(src) {
+		return "", ErrInvalidString
+	}
+
 	var prev rune
 	var buf bytes.Buffer
 
@@ -39,4 +43,11 @@ func Unpack(src string) (string, error) {
 		buf.WriteRune(prev)
 	}
 	return buf.String(), nil
+}
+
+func isInvalidStr(src string) bool {
+	if len(src) == 0 {
+		return false
+	}
+	return unicode.IsDigit(rune(src[0])) || strings.HasSuffix(src, "\\")
 }

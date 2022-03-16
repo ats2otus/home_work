@@ -43,3 +43,20 @@ func TestUnpackInvalidString(t *testing.T) {
 		})
 	}
 }
+
+func Test_isInvalidStr(t *testing.T) {
+	testCases := []struct {
+		name  string
+		valid bool
+		src   string
+	}{
+		{"empty string", false, ``},
+		{"starts with digit", true, `1`},
+		{"ends with asterisk", true, `qwer\`},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			require.Equal(t, tc.valid, isInvalidStr(tc.src))
+		})
+	}
+}
