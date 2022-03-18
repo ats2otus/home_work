@@ -32,7 +32,7 @@ func Top10(src string) []string {
 	return words
 }
 
-// убирает пунктуацию и переводит в нижний регистр
+// убирает пунктуацию и переводит в нижний регистр.
 func normalize(word string) string {
 	word = strings.TrimFunc(word, unicode.IsPunct)
 	word = strings.ToLower(word)
