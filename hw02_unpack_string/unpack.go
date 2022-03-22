@@ -5,6 +5,7 @@ import (
 	"errors"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
 var ErrInvalidString = errors.New("invalid string")
@@ -17,8 +18,8 @@ func Unpack(src string) (string, error) {
 	var prev rune
 	var buf bytes.Buffer
 
-	for i := 0; i < len(src); i++ {
-		ch := rune(src[i])
+	for i := 0; i < len(src); {
+		ch, size := utf8.DecodeRuneInString(src[i:])
 		switch {
 		case unicode.IsDigit(ch):
 			if prev == 0 {
@@ -38,6 +39,7 @@ func Unpack(src string) (string, error) {
 			}
 			prev = ch
 		}
+		i += size
 	}
 	if prev != 0 {
 		buf.WriteRune(prev)
