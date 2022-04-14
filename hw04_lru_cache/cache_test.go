@@ -1,6 +1,7 @@
 package hw04lrucache
 
 import (
+	"fmt"
 	"math/rand"
 	"strconv"
 	"sync"
@@ -76,4 +77,61 @@ func TestCacheMultithreading(t *testing.T) {
 	}()
 
 	wg.Wait()
+}
+
+func Test_Eviction(t *testing.T) {
+
+	t.Run("simple", func(t *testing.T) {
+		const capacity = 10
+
+		c := lruCache{
+			capacity: capacity,
+			queue:    NewList(),
+			items:    make(map[Key]*ListItem, capacity),
+		}
+
+		for i := 0; i < 100; i++ {
+			c.Set(Key(fmt.Sprintf("key-%d", i)), i)
+		}
+		require.Equal(t, capacity, c.queue.Len())
+	})
+
+	t.Run("complex", func(t *testing.T) {
+		const capacity = 3
+
+		c := lruCache{
+			capacity: capacity,
+			queue:    NewList(),
+			items:    make(map[Key]*ListItem, capacity),
+		}
+
+		c.Set("1", 1)
+		c.Set("2", 2)
+		c.Set("3", 3) // queue: 3, 2, 1
+
+		c.Get("1") // queue: 1, 3, 2
+		c.Get("2") // queue: 2, 1, 3
+
+		c.Set("4", 4) // queue: 4, 2, 1
+
+		require.Equal(t, 4, c.queue.Front().Value)
+		require.Equal(t, 1, c.queue.Back().Value)
+	})
+}
+
+func Test_Cache_Clear(t *testing.T) {
+	const capacity = 10
+
+	c := lruCache{
+		capacity: capacity,
+		queue:    NewList(),
+		items:    make(map[Key]*ListItem, capacity),
+	}
+
+	for i := 0; i < 100; i++ {
+		c.Set(Key(fmt.Sprintf("key-%d", i)), i)
+	}
+	c.Clear()
+	require.Equal(t, 0, c.queue.Len(), "queue len")
+	require.Equal(t, 0, len(c.items), "items len")
 }
